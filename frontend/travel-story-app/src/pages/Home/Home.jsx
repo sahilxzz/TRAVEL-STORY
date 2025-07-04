@@ -8,7 +8,6 @@ import Modal from "react-modal";
 import AddEditTravelStory from "./AddEditTravelStory";
 import ViewTravelStory from "./ViewTravelStory";
 import EmptyCard from "../../components/cards/EmptyCard";
-import { assets } from "../../assets/assets";
 import moment from "moment";
 import FilterInfoTitle from "../../components/cards/FilterInfoTitle";
 import { getEmptyCardMessage } from "../../utils/helper";
@@ -38,24 +37,20 @@ const Home = () => {
     data: null,
   });
 
-  // Get user Info
   const getUserInfo = async () => {
     try {
       const response = await axiosInstance.get("/get-user");
       if (response.data && response.data.user) {
-        // Set user info if data exists
         setUserInfo(response.data.user);
       }
     } catch (error) {
-      if (error.response.status == 401) {
-        // Clear storage if unauthorized
+      if (error.response.status === 401) {
         localStorage.clear();
-        navigate("/login"); // Redirect to login
+        navigate("/login");
       }
     }
   };
 
-  // Get all travel stories
   const getAllTravelStories = async () => {
     try {
       const response = await axiosInstance.get("/get-all-stories");
@@ -63,34 +58,29 @@ const Home = () => {
         setAllStories(response.data.stories);
       }
     } catch (error) {
-      console.log("An unexpected error occured. Please try again.");
+      console.log("An unexpected error occurred. Please try again.");
     }
   };
 
-  // Handle Edit story click
   const handleEdit = (data) => {
     setOpenEditModal({ isShown: true, type: "edit", data: data });
   };
 
-  // Handle Travel Story Click
   const handleViewStory = (data) => {
     setOpenViewModal({ isShown: true, data });
   };
 
-  // Handle update favourite
   const updateIsFavourite = async (storyData) => {
     const storyId = storyData._id;
 
     try {
       const response = await axiosInstance.put(
         "/update-is-favourite/" + storyId,
-        {
-          isFavourite: !storyData.isFavourite,
-        }
+        { isFavourite: !storyData.isFavourite }
       );
 
       if (response.data && response.data.message) {
-        toast.success("Story updates successfully");
+        toast.success("Story updated successfully");
 
         if (filterType === "search" && searchQuery) {
           onSearchStory(searchQuery);
@@ -101,11 +91,9 @@ const Home = () => {
         }
       }
     } catch (error) {
-      console.log("An unexpected error occures. Please try again.");
+      console.log("An unexpected error occurred. Please try again.");
     }
   };
-
-  // Delete story
 
   const deleteTravelStory = async (data) => {
     const storyId = data._id;
@@ -119,18 +107,14 @@ const Home = () => {
         getAllTravelStories();
       }
     } catch (error) {
-      // Handle unexpected error
-      console.log("An unexpected error occured. Please try again");
+      console.log("An unexpected error occurred. Please try again");
     }
   };
 
-  // Search Story
   const onSearchStory = async (query) => {
     try {
       const response = await axiosInstance.get("/search/", {
-        params: {
-          query,
-        },
+        params: { query },
       });
 
       if (response.data && response.data.stories) {
@@ -138,8 +122,7 @@ const Home = () => {
         setAllStories(response.data.stories);
       }
     } catch (error) {
-      // Handle unexpected error
-      console.log("An unexpected error occured. Please try again");
+      console.log("An unexpected error occurred. Please try again");
     }
   };
 
@@ -148,7 +131,6 @@ const Home = () => {
     getAllTravelStories();
   };
 
-  // Handle Filter Travel Story By Date Range
   const filterStoriesByDate = async (day) => {
     try {
       const startDate = day.from ? moment(day.from).valueOf() : null;
@@ -166,11 +148,10 @@ const Home = () => {
       }
     } catch (error) {
       console.log(error);
-      console.log("An unexpected error occured. Please try again");
+      console.log("An unexpected error occurred. Please try again");
     }
   };
 
-  // Handle date range select
   const handleDayClick = (day) => {
     setDateRange(day);
     filterStoriesByDate(day);
@@ -179,14 +160,12 @@ const Home = () => {
   const resetFilter = () => {
     setDateRange({ from: null, to: null });
     setFilterType("");
-    getAllTravelStories(day);
+    getAllTravelStories();
   };
 
   useEffect(() => {
     getAllTravelStories();
     getUserInfo();
-
-    return () => {};
   }, []);
 
   return (
@@ -199,34 +178,31 @@ const Home = () => {
         handleClearSearch={handleClearSearch}
       />
 
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto px-4 py-10">
         <FilterInfoTitle
           filterType={filterType}
           filterDates={dateRange}
-          onClear={() => {
-            resetFilter();
-          }}
+          onClear={resetFilter}
         />
-        <div className="flex gap-7">
+
+        <div className="flex flex-col lg:flex-row gap-7">
           <div className="flex-1">
             {allStories.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
-                {allStories.map((item) => {
-                  return (
-                    <TravelStoryCard
-                      key={item._id}
-                      imgUrl={item.imageUrl}
-                      title={item.title}
-                      story={item.story}
-                      date={item.visitedDate}
-                      visitedLocation={item.visitedLocation}
-                      isFavourite={item.isFavourite}
-                      onEdit={() => handleEdit(item)}
-                      onClick={() => handleViewStory(item)}
-                      onFavouriteClick={() => updateIsFavourite(item)}
-                    />
-                  );
-                })}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {allStories.map((item) => (
+                  <TravelStoryCard
+                    key={item._id}
+                    imgUrl={item.imageUrl}
+                    title={item.title}
+                    story={item.story}
+                    date={item.visitedDate}
+                    visitedLocation={item.visitedLocation}
+                    isFavourite={item.isFavourite}
+                    onEdit={() => handleEdit(item)}
+                    onClick={() => handleViewStory(item)}
+                    onFavouriteClick={() => updateIsFavourite(item)}
+                  />
+                ))}
               </div>
             ) : (
               <EmptyCard
@@ -236,11 +212,11 @@ const Home = () => {
             )}
           </div>
 
-          <div className="w-[320px]">
+          <div className="w-full lg:w-[320px] mt-8 lg:mt-0">
             <div className="bg-white border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg">
               <div className="p-3">
                 <DayPicker
-                  captionLayout="dropdown-button"
+                  captionLayout="dropdown-buttons"
                   mode="range"
                   selected={dateRange}
                   onSelect={handleDayClick}
@@ -252,15 +228,11 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Add and edit travel story modal */}
       <Modal
         isOpen={openEditModal.isShown}
         onRequestClose={() => {}}
         style={{
-          overlay: {
-            backgroundColor: "rgba(0,0,0,0.2)",
-            zIndex: 999,
-          },
+          overlay: { backgroundColor: "rgba(0,0,0,0.2)", zIndex: 999 },
         }}
         appElement={document.getElementById("root")}
         className="modal-box scrollbar"
@@ -268,46 +240,34 @@ const Home = () => {
         <AddEditTravelStory
           type={openEditModal.type}
           storyInfo={openEditModal.data}
-          onClose={() => {
-            setOpenEditModal({ isShown: false, type: "add", data: null });
-          }}
+          onClose={() => setOpenEditModal({ isShown: false, type: "add", data: null })}
           getAllTravelStories={getAllTravelStories}
         />
       </Modal>
 
-      {/* View travel story modal */}
       <Modal
         isOpen={openViewModal.isShown}
         onRequestClose={() => {}}
         style={{
-          overlay: {
-            backgroundColor: "rgba(0,0,0,0.2)",
-            zIndex: 999,
-          },
+          overlay: { backgroundColor: "rgba(0,0,0,0.2)", zIndex: 999 },
         }}
         appElement={document.getElementById("root")}
         className="modal-box scrollbar"
       >
         <ViewTravelStory
           storyInfo={openViewModal.data || null}
-          onClose={() => {
-            setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
-          }}
+          onClose={() => setOpenViewModal((prevState) => ({ ...prevState, isShown: false }))}
           onEditClick={() => {
             setOpenViewModal((prevState) => ({ ...prevState, isShown: false }));
             handleEdit(openViewModal.data || null);
           }}
-          onDeleteClick={() => {
-            deleteTravelStory(openViewModal.data || null);
-          }}
+          onDeleteClick={() => deleteTravelStory(openViewModal.data || null)}
         />
       </Modal>
 
       <button
-        className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-10 bottom-10"
-        onClick={() => {
-          setOpenEditModal({ isShown: true, type: "add", data: null });
-        }}
+        className="w-16 h-16 flex items-center justify-center rounded-full bg-primary hover:bg-cyan-400 fixed right-6 bottom-10 sm:bottom-16"
+        onClick={() => setOpenEditModal({ isShown: true, type: "add", data: null })}
       >
         <MdAdd className="text-[32px] text-white" />
       </button>
