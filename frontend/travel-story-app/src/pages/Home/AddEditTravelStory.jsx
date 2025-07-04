@@ -268,6 +268,3 @@ const AddEditTravelStory = ({
 };
 
 export default AddEditTravelStory;
-
-
-fix for phone
