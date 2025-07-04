@@ -1,4 +1,5 @@
 require("dotenv").config();
+const PORT = process.env.PORT || 8000;
 
 //const config = require("./config.json")
 const mongoose = require("mongoose");
@@ -24,9 +25,11 @@ mongoose.connect(process.env.MONGO_URI);
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "https://travel-story-backend-qsvo.onrender.com",
-    credentials: true,
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  credentials: true
 }));
+
 
 
 // app.use(express.urlencoded({ extended: true }));
@@ -85,7 +88,7 @@ app.post("/create-account", async(req, res) => {
         error: false,
         user: { fullName: user.fullName, email: user.email },
         accessToken,
-        messag: "Registration Successfull",
+        message: "Registration Successfull",
     });
 });
 
@@ -197,7 +200,9 @@ app.post("/image-upload", upload.single("image"), async(req, res) => {
                 .json({error: true, message: "No image uploaded"});
         }
 
-        const imageUrl = `http://localhost:8000/uploads/${req.file.filename}`;
+        const serverUrl = process.env.SERVER_URL || `http://localhost:${PORT}`;
+        const imageUrl = `${serverUrl}/uploads/${req.file.filename}`;
+
 
         res.status(200).json({imageUrl});
     }catch (error) {
@@ -262,7 +267,9 @@ app.put("/edit-story/:id", authenticateToken, async(req, res) => {
             return res.status(404).json({error: true, message: "Travel Story not found"});
         }
 
-        const placeholderImgUrl = "http://localhost:8000/assets/placeholder.png";
+        const serverUrl = process.env.SERVER_URL || `http://localhost:${PORT}`;
+        const placeholderImgUrl = `${serverUrl}/assets/placeholder.png`;
+
 
         travelStory.title = title;
         travelStory.story = story;
@@ -404,7 +411,7 @@ app.get("/travel-stories/filter", authenticateToken, async(req, res) => {
 
 // app.listen(8000);
 
-const PORT = process.env.PORT || 8000;
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
