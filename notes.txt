@@ -1,4 +1,4 @@
-mongodb+srv://codekage9:wlYgyGiXxmi5SddF@travelstory.x5hzp9z.mongodb.net/?retryWrites=true&w=majority&appName=travelstory
+
 
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
