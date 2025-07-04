@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const config = require("./config.json")
+//const config = require("./config.json")
 const mongoose = require("mongoose");
 
 const bcrypt = require("bcrypt");
@@ -24,7 +24,9 @@ mongoose.connect(process.env.MONGO_URI);
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "https://travel-story-backend-qsvo.onrender.com",
+    credentials: true,
+}));
 
 
 // app.use(express.urlencoded({ extended: true }));
