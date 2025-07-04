@@ -1,4 +1,4 @@
-import loginBg from './images/main.png'
+import loginBg from './images/main.PNG'
 import signUpBg from './images/SignUp.jpg'
 import Logo from './images/Story.png'
 import EmptyImg from './images/empty.png'
