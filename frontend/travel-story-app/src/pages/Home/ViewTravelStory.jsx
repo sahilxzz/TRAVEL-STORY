@@ -1,68 +1,58 @@
 import React from "react";
 import { GrMapLocation } from "react-icons/gr";
-import { MdAdd, MdClose, MdDeleteOutline, MdUpdate } from "react-icons/md";
+import { MdClose, MdDeleteOutline, MdUpdate } from "react-icons/md";
 import moment from "moment";
 
-const ViewTravelStory = ({
-  storyInfo,
-  onClose,
-  onEditClick,
-  onDeleteClick,
-}) => {
+const ViewTravelStory = ({ storyInfo, onClose, onEditClick, onDeleteClick }) => {
   return (
     <div className="relative">
-      <div className="flex items-center justify-end">
-        <div>
-          <div className="flex items-center gap-3 bg-cyan-50/50 p-2 rounded -l-lg">
-            <button className="btn-small" onClick={onEditClick}>
-              <MdUpdate className="text-lg" />
-              UPDATE STORY
-            </button>
+      {/* Header Actions */}
+      <div className="flex flex-col sm:flex-row items-end justify-between gap-2">
+        <h1 className="text-xl sm:text-2xl text-slate-900 font-semibold">
+          {storyInfo?.title}
+        </h1>
 
-            <button className="btn-small btn-delete" onClick={onDeleteClick}>
-              <MdDeleteOutline className="text-lg" />
-              DELETE
-            </button>
-
-            <button className="" onClick={onClose}>
-              <MdClose className="text-xl text-slate-400" />
-            </button>
-          </div>
+        <div className="flex flex-wrap gap-2 bg-cyan-50/50 p-2 rounded-md">
+          <button className="btn-small" onClick={onEditClick}>
+            <MdUpdate className="text-lg" />
+            UPDATE STORY
+          </button>
+          <button className="btn-small btn-delete" onClick={onDeleteClick}>
+            <MdDeleteOutline className="text-lg" />
+            DELETE
+          </button>
+          <button onClick={onClose}>
+            <MdClose className="text-xl text-slate-400" />
+          </button>
         </div>
       </div>
 
-      <div>
-        <div className="flex-1 flex flex-col gap-2 py-4">
-          <h1 className="text-2xl text-slate-950">
-            {storyInfo && storyInfo.title}
-          </h1>
+      {/* Date and Locations */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-3 text-sm text-slate-600">
+        <span>{storyInfo && moment(storyInfo.visitedDate).format("DD MMM YYYY")}</span>
 
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-slate-500">
-              {storyInfo && moment(storyInfo.visitedDate).format("D0 MMM YYYY")}
-            </span>
-
-            <div className="inline-flex items-center gap-2 text-[13px] text-cyan-600 bg-cyan-200/40 rounded px-2 py-1">
-              <GrMapLocation className="text-sm" />
-              {storyInfo &&
-                storyInfo.visitedLocation.map((item, index) =>
-                  storyInfo.visitedLocation.length == index + 1
-                    ? `${item}`
-                    : `${item}, `
-                )}
-            </div>
-          </div>
+        <div className="flex items-center gap-2 text-cyan-600 bg-cyan-100 px-3 py-1 rounded text-xs">
+          <GrMapLocation className="text-base" />
+          <span className="truncate max-w-[200px] sm:max-w-none">
+            {storyInfo?.visitedLocation?.join(", ")}
+          </span>
         </div>
+      </div>
+
+      {/* Story Image */}
+      {storyInfo?.imageUrl && (
         <img
-            src={storyInfo && storyInfo.imageUrl}
-            alt="Selected"
-            className="w-full h-[300px] object-cover rounded-lg"
-          />
+          src={storyInfo.imageUrl}
+          alt="Travel"
+          className="w-full h-52 sm:h-72 object-cover rounded-lg mt-4"
+        />
+      )}
 
-          <div className="mt-4">
-            <p className="text-sm text-slate-950 loading-6 text-justify whitespace-pre-line">{storyInfo.story}</p>
-
-          </div>
+      {/* Story Description */}
+      <div className="mt-4">
+        <p className="text-sm sm:text-base text-slate-900 leading-relaxed text-justify whitespace-pre-line">
+          {storyInfo?.story}
+        </p>
       </div>
     </div>
   );
